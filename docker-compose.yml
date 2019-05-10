@@ -1,0 +1,19 @@
+version: '3.5'
+
+services:
+  django:
+    image: django
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    command: db run
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src/:/src/
+#     networks:
+#       - napoleon-ricc-network
+
+# networks:
+#   napoleon-ricc-network:
+#     external: true
