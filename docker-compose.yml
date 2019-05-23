@@ -9,6 +9,8 @@ services:
       - "8080:15672"
       - "5672:5672"
     hostname: "ricc-rabbit"
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq/
 
   django:
     image: django
@@ -22,6 +24,9 @@ services:
       - ./src/:/src/
 #     networks:
 #       - napoleon-ricc-network
+
+volumes:
+  rabbit_data:
 
 # networks:
 #   napoleon-ricc-network:
