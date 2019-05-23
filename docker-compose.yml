@@ -1,6 +1,15 @@
 version: '3.5'
 
 services:
+  rabbitmq:
+    image: rabbitmq:3.7.14
+    env_file:
+      - ./docker/rabbitmq.env
+    ports:
+      - "8080:15672"
+      - "5672:5672"
+    hostname: "ricc-rabbit"
+
   django:
     image: django
     build:
