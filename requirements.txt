@@ -3,3 +3,4 @@ djangorestframework~=3.9.3
 django-boogie~=0.13.3
 django-polymorphic~=2.0.3
 invoke~=1.2.0
+requests
