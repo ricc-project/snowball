@@ -3,3 +3,5 @@ djangorestframework~=3.9.3
 django-boogie~=0.13.3
 django-polymorphic~=2.0.3
 invoke~=1.2.0
+channels~=2.2.0
+channels-redis~=2.4.0

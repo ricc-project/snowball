@@ -1,6 +1,12 @@
 version: '3.5'
 
 services:
+  redis:
+    image: redis:2.8
+    ports:
+      - "6379:6379"
+    hostname: "ricc-redis"
+
   rabbitmq:
     image: rabbitmq:3-management
     env_file:
