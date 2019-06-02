@@ -1,12 +1,12 @@
+import hashlib, binascii, requests, json
+from rest_framework import status
 from boogie.router import Router
 from django.db import models
-from rest_framework import status
-from .models import User
 from django.http import HttpResponse
-from requests import request
-import hashlib, binascii
-import requests
-import json
+from .models import User
+from .manager import verify_password
+from .data_api import create_user_on_data_api
+
 
 urlpatterns = Router()
 
@@ -19,7 +19,6 @@ def signup(request):
             password = request.POST['password']
             # try:
             user = User.objects.create_user(username, password)
-            create_user_on_data_api(user, username, password)
             response = {"authentication_token": user.auth_token}
             rstatus = status.HTTP_201_CREATED
             # except:
