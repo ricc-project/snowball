@@ -148,11 +148,10 @@ def get_central(request):
 def get_node(request):
     if(request.method == "POST"):
         data = json.loads(request.body)
-        if 'type' in data.keys() and 'name' in data.keys():
-            if(data['type'] == "actuator"):
-                actuator = Actuator.objects.filter(name=data['name'])
-                if actuator:
-                    return actuator.first()
+        if 'name' in data.keys():
+            actuator = Actuator.objects.filter(name=data['name'])
+            if actuator:
+                return actuator.first()
             else:
                 station = Station.objects.filter(name=data['name'])
                 if station:
