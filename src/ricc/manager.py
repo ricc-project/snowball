@@ -29,3 +29,18 @@ class UserManager(models.Manager):
 
     def create_user(self, username=None, password=None, **extra_fields):
         return self._create_user(username, password, **extra_fields)
+
+
+def verify_password(user=None, provided_password=None):
+    """Verify a stored password against one provided by user"""
+    if user is None or provided_password is None:
+        return False
+
+    salt = user.hash[:64]
+    stored_password = user.hash[64:]
+    pwdhash = hashlib.pbkdf2_hmac('sha512',
+                                  provided_password.encode('utf-8'),
+                                  salt.encode('ascii'),
+                                  100000)
+    pwdhash = binascii.hexlify(pwdhash).decode('ascii')
+    return pwdhash == stored_password

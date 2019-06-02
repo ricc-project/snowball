@@ -64,41 +64,10 @@ def verify_sent_credentials(request):
     return False
 
 
-def verify_password(user=None, provided_password=None):
-    """Verify a stored password against one provided by user"""
-    if user is None or provided_password is None:
-        return False
 
-    salt = user.hash[:64]
-    stored_password = user.hash[64:]
-    pwdhash = hashlib.pbkdf2_hmac('sha512',
-                                  provided_password.encode('utf-8'),
-                                  salt.encode('ascii'),
-                                  100000)
-    pwdhash = binascii.hexlify(pwdhash).decode('ascii')
-    return pwdhash == stored_password
+@urlpatterns.route("create_station/")
+def create_station(request):
+    pass
+    # user = create_user_on_data_api(user, username, password)
+            
 
-def create_user_on_data_api(user, username, password):
-    data = {
-        'username':username,
-        'password':password
-    }
-    
-    result = request_data_api('signup/', data)
-    result = json.loads(result)
-
-    user.data_token = result['authentication_token']
-    user.save()
-
-
-def request_data_api(end_point, data={}):
-    post_url = "http://localhost:8080/" + end_point
-
-    headers = {"content-type": "application/json"}
-    data = json.dumps(data)
-
-    print(data)
-
-    r = requests.post(post_url, data=data, headers=headers)
-
-    return r.text
