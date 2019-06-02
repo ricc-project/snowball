@@ -5,7 +5,7 @@ from django.db import models
 from django.http import HttpResponse
 from .models import User, Station, Central, Actuator
 from .manager import verify_password
-from .data_api import create_user_on_data_api
+from .data_api import create_user_on_data_api, send_data
 
 
 urlpatterns = Router()
@@ -105,6 +105,21 @@ def create_actuator(request):
     else:
         return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
 
+@urlpatterns.route("send_data/")
+def receive_data(request):
+    user = verify_auth(request)
+    central = get_central(request)
+    node = get_node(request)
+    if user and central and node:
+        data = json.loads(request.body)
+        if 'data' in data.keys():
+            send_data(node, data['data'])
+            return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+
+        return HttpResponse("Insuficient information", status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+
 
 def verify_auth(request):
     if(request.method == "POST"):
@@ -126,6 +141,22 @@ def get_central(request):
             print(central)
             if central:
                 return central.first()
+        return None
+    else:
+        return None
+
+def get_node(request):
+    if(request.method == "POST"):
+        data = json.loads(request.body)
+        if 'type' in data.keys() and 'name' in data.keys():
+            if(data['type'] == "actuator"):
+                actuator = Actuator.objects.filter(name=data['name'])
+                if actuator:
+                    return actuator.first()
+            else:
+                station = Station.objects.filter(name=data['name'])
+                if station:
+                    return station.first()
         return None
     else:
         return None

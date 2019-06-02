@@ -10,7 +10,18 @@ def create_user_on_data_api(username, password):
     result = json.loads(result)
 
     return result['authentication_token']
-    
+
+
+def send_data(node, node_data):
+    data = {
+        "auth_token": node.data_token,
+        "data": node_data
+    }
+    result = request_data_api('send-data/', data)
+
+    print(result)
+
+
 def request_data_api(end_point, data={}):
     post_url = "http://localhost:8080/" + end_point
 
@@ -22,3 +33,4 @@ def request_data_api(end_point, data={}):
     r = requests.post(post_url, data=data, headers=headers)
 
     return r.text
+
