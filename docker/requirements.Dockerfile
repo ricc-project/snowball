@@ -1,9 +1,10 @@
 FROM debian:buster-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        python3 \
+        python3-dev \
         python3-pip \
-        python3-setuptools
+        python3-setuptools \
+        gcc
 
 COPY ./requirements.txt /src/requirements.txt
 

@@ -7,23 +7,24 @@ services:
       - "6379:6379"
     hostname: "ricc-redis"
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    env_file:
-      - ./docker/rabbitmq.env
-    ports:
-      - "8080:15672"
-      - "5672:5672"
-    hostname: "ricc-rabbit"
-    volumes:
-      - rabbit_data:/var/lib/rabbitmq/
-
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   env_file:
+  #     - ./docker/rabbitmq.env
+  #   ports:
+  #     - "8080:15672"
+  #     - "5672:5672"
+  #   hostname: "ricc-rabbit"
+  #   volumes:
+  #     - rabbit_data:/var/lib/rabbitmq/
+  
   django:
     image: django
+    network_mode: 'host'
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-    command: db run
+    command: inv db run
     ports:
       - "8000:8000"
     volumes:
