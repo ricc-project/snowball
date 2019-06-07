@@ -3,7 +3,7 @@ from rest_framework import status
 from boogie.router import Router
 from django.db import models
 from django.http import HttpResponse
-from .models import User, Station, Central, Actuator
+from .models import User, Station, Central, Actuator, UnlockedCentral
 from .manager import verify_password
 from .data_api import create_user_on_data_api, send_data
 
@@ -70,10 +70,35 @@ def create_central(request):
     user = verify_auth(request)
     if(user):
         mac_address = json.loads(request.body)['mac_address']
-        Central.objects.create_central(user, mac_address)
+        unlockedCentrals = UnlockedCentral.objects.filter(mac_address=mac_address)
+        if(unlockedCentrals):
+            Central.objects.create_central(user, mac_address)
+            return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+        else:
+            return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+
+@urlpatterns.route("call/")
+def socket_call(request):
+    mac_address = json.loads(request.body)['mac_address']
+    centrals = Central.objects.filter(mac_address=mac_address)
+    if centrals:
+        token = centrals.first().owner.auth_token
+        return HttpResponse('{"auth_token":' + '"' + token + '"}', status=status.HTTP_200_OK)    
+    else:
+        return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+
+@urlpatterns.route("sign_central/")
+def sign_central(request):
+    user = verify_auth(request)
+    if(user):
+        mac_address = json.loads(request.body)['mac_address']
+        UnlockedCentral.objects.create_central(mac_address)
         return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
     else:
         return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+
 
 @urlpatterns.route("create_station/")
 def create_station(request):

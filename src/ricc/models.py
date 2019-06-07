@@ -1,5 +1,5 @@
 from django.db import models
-from .manager import UserManager, CentralManager, ActuatorManager, StationManager
+from .manager import UserManager, CentralManager, ActuatorManager, StationManager, UnlockedCentralManager
 from boogie.rest import rest_api
 
 @rest_api(exclude=['hash','auth_token'])
@@ -17,6 +17,11 @@ class Central(models.Model):
     mac_address = models.CharField(max_length=64, unique=True)
     automatic_irrigation = models.BooleanField('Automatic Irrigation Status')
     objects = CentralManager()
+
+@rest_api()
+class UnlockedCentral(models.Model):
+    mac_address = models.CharField(max_length=64, unique=True)
+    objects = UnlockedCentralManager()
 
 class Node(models.Model):
     class Meta:

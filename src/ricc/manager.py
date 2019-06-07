@@ -52,6 +52,17 @@ class CentralManager(models.Manager):
     def create_central(self, user, mac_address):
         return self._create_central(user, mac_address)
 
+
+class UnlockedCentralManager(models.Manager):    
+    def _create_central(self, mac_address):
+        central = self.model(mac_address=mac_address)
+        central.save(using=self._db)
+
+        return central
+
+    def create_central(self,mac_address):
+        return self._create_central(mac_address)
+
 class ActuatorManager(models.Manager):
     def _create_actuator(self, name, central, data_token, **extra_fields):
 
