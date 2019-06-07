@@ -91,13 +91,13 @@ def socket_call(request):
 
 @urlpatterns.route("sign_central/")
 def sign_central(request):
-    user = verify_auth(request)
-    if(user):
-        mac_address = json.loads(request.body)['mac_address']
-        UnlockedCentral.objects.create_central(mac_address)
-        return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
-    else:
-        return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+    # user = verify_auth(request)
+    # if(user):
+    mac_address = json.loads(request.body)['mac_address']
+    UnlockedCentral.objects.create_central(mac_address)
+    return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+    # else:
+        # return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
 
 
 @urlpatterns.route("create_station/")
