@@ -18,12 +18,13 @@ def signup(request):
         if data.keys() >= {"username", "password"}:
             username = data['username']
             password = data['password']
-            # try:
+            
             user = User.objects.create_user(username, password)
-            response = {"authentication_token": user.auth_token}
-            rstatus = status.HTTP_201_CREATED
-            # except:
-                # response = {"Unavailable username": "username already taken"}
+            if(model):
+                response = {"authentication_token": user.auth_token}
+                rstatus = status.HTTP_201_CREATED
+            else:
+                response = {"Unavailable username": "username already taken"}
         else:
             response = {
                 "Not enough credencials": "You need to send password and username."}
@@ -72,8 +73,11 @@ def create_central(request):
         mac_address = json.loads(request.body)['mac_address']
         unlockedCentrals = UnlockedCentral.objects.filter(mac_address=mac_address)
         if(unlockedCentrals):
-            Central.objects.create_central(user, mac_address)
-            return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+            model = Central.objects.create_central(user, mac_address)
+            if(model):
+                return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+            else:
+                return HttpResponse("Mac already used.", status=status.HTTP_401_UNAUTHORIZED)
         else:
             return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
     else:
@@ -95,10 +99,11 @@ def sign_central(request):
     # user = verify_auth(request)
     # if(user):
     mac_address = json.loads(request.body)['mac_address']
-    UnlockedCentral.objects.create_central(mac_address)
-    return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
-    # else:
-        # return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+    model = UnlockedCentral.objects.create_central(mac_address)
+    if(model):
+        return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+    else:
+        return HttpResponse("Mac in use.", status=status.HTTP_401_UNAUTHORIZED)
 
 
 @urlpatterns.route("create_station/")
@@ -109,8 +114,11 @@ def create_station(request):
         central = get_central(request)
         if(central):
             node_authentication = create_user_on_data_api(name, user.auth_token)
-            Station.objects.create_station(name, central, node_authentication)
-            return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+            model = Station.objects.create_station(name, central, node_authentication)
+            if(model):
+                return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+            else:
+                return HttpResponse("Station already exists.", status=status.HTTP_401_UNAUTHORIZED)
         else:
             return HttpResponse("No central informed", status=status.HTTP_401_UNAUTHORIZED)
     else:
@@ -124,8 +132,11 @@ def create_actuator(request):
         central = get_central(request)
         if(central):
             node_authentication = create_user_on_data_api(name, user.auth_token)
-            Actuator.objects.create_actuator(name, central, node_authentication)
-            return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+            model = Actuator.objects.create_actuator(name, central, node_authentication)
+            if(model):
+                return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+            else:
+                return HttpResponse("Actuator already exists.", status=status.HTTP_401_UNAUTHORIZED)
         else:
             return HttpResponse("No central informed", status=status.HTTP_401_UNAUTHORIZED)
     else:

@@ -11,8 +11,11 @@ class UserManager(models.Manager):
         auth_token = self._get_salt()
 
         user = self.model(username=username, hash=hash, auth_token=auth_token)
+        try:
+            user.save(using=self._db)
+        except:
+            return None
 
-        user.save(using=self._db)
 
         return user
 
@@ -35,7 +38,10 @@ class StationManager(models.Manager):
     def _create_station(self, name, central, data_token):
 
         station = self.model(name=name, central=central, data_token=data_token)
-        station.save(using=self._db)
+        try:
+            station.save(using=self._db)
+        except:
+            return None
 
         return station
 
@@ -45,8 +51,11 @@ class StationManager(models.Manager):
 class CentralManager(models.Manager):    
     def _create_central(self, user, mac_address, **extra_fields):
         central = self.model(owner=user, mac_address=mac_address, automatic_irrigation=False)
-        central.save(using=self._db)
-
+        
+        try:
+            central.save(using=self._db)
+        except:
+            return None
         return central
 
     def create_central(self, user, mac_address):
@@ -56,7 +65,11 @@ class CentralManager(models.Manager):
 class UnlockedCentralManager(models.Manager):    
     def _create_central(self, mac_address):
         central = self.model(mac_address=mac_address)
-        central.save(using=self._db)
+
+        try:
+            central.save(using=self._db)
+        except:
+            return None
 
         return central
 
@@ -67,7 +80,11 @@ class ActuatorManager(models.Manager):
     def _create_actuator(self, name, central, data_token, **extra_fields):
 
         actuator = self.model(name=name, central=central, data_token=data_token, status=False)
-        actuator.save(using=self._db)
+
+        try:
+            actuator.save(using=self._db)
+        except:
+            return None
 
         return actuator
 
