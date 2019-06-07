@@ -6,3 +6,4 @@ invoke~=1.2.0
 channels~=2.2.0
 channels-redis~=2.4.0
 requests
+cryptography

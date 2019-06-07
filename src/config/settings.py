@@ -13,7 +13,7 @@ SECRET_KEY = 'ktuf#82@%0!vo#sw4kd8a9%zsgc@805d_@6$4x4yp-6a*^*slz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -118,7 +118,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('ricc-redis', 6379)],
+            "hosts": [('localhost', 6379)],
         },
     },
 }
