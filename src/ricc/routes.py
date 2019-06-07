@@ -81,7 +81,8 @@ def create_central(request):
 
 @urlpatterns.route("call/")
 def socket_call(request):
-    mac_address = json.loads(request.body)['mac_address']
+    mac_address = request.GET.get('mac','LIXODEFAULT')
+    mac_address.replace('-',':')
     centrals = Central.objects.filter(mac_address=mac_address)
     if centrals:
         token = centrals.first().owner.auth_token
