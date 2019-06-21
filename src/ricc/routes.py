@@ -51,16 +51,16 @@ def login(request):
             try:
                 user = User.objects.get(username=username)
             except:
-                response = response = {"Incorrect Credentials": "Invalid login information."}
+                response = response = {"message": "Invalid login information."}
 
             if(verify_password(user, password)):
                 response = {"authentication_token": user.auth_token}
                 rstatus = status.HTTP_202_ACCEPTED
             else:
-                response = {"Incorrect Credentials": "Invalid login information."}
+                response = {"message": "Invalid login information."}
     else:
         response = {
-            "Not enough information sent to do this.":
+            "message":
             "No username or Password, maybe not a POST method."}
 
     response = json.dumps(response)
