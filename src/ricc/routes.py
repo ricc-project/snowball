@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from .models import User, Station, Central, Actuator, UnlockedCentral
 from .manager import verify_password
 from .data_api import create_user_on_data_api, send_data
-
+import json
 
 urlpatterns = Router()
 
@@ -22,16 +22,20 @@ def signup(request):
             user = User.objects.create_user(username, password)
             if(user):
                 response = {"authentication_token": user.auth_token}
+                response = json.dumps(response)
+                response = json.loads(response)
+
                 rstatus = status.HTTP_201_CREATED
             else:
-                response = {"Unavailable username": "username already taken"}
+                response = {"message": "username already taken"}
         else:
             response = {
-                "Not enough credencials": "You need to send password and username."}
+                "message": "You need to send password and username."}
     else:
-        response = {"Wrong method.": "Can't signup with GET method."}
+        response = {"message": "Can't signup with GET method."}
 
-    return HttpResponse(str(response), status=rstatus)
+    response = json.dumps(response)
+    return HttpResponse(response, status=rstatus)
 
 
 @urlpatterns.route("login/")
@@ -59,6 +63,7 @@ def login(request):
             "Not enough information sent to do this.":
             "No username or Password, maybe not a POST method."}
 
+    response = json.dumps(response)
     return HttpResponse(str(response), status=rstatus)
 
 @urlpatterns.route("create_central/")
