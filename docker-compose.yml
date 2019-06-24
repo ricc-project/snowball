@@ -20,6 +20,7 @@ services:
   
   snowball:
     image: django
+    hostname: snowball
     networks:
       - napoleon_ricc-network
     build:
