@@ -18,9 +18,10 @@ services:
   #   volumes:
   #     - rabbit_data:/var/lib/rabbitmq/
   
-  django:
+  snowball:
     image: django
-    network_mode: 'host'
+    networks:
+      - napoleon_ricc-network
     build:
       context: .
       dockerfile: ./docker/Dockerfile
@@ -29,12 +30,12 @@ services:
       - redis
     volumes:
       - ./src/:/src/
-#     networks:
-#       - napoleon-ricc-network
+    ports:
+      - "8000:8000"
 
 volumes:
   rabbit_data:
 
-# networks:
-#   napoleon-ricc-network:
-#     external: true
+networks:
+  napoleon_ricc-network:
+    external: true
