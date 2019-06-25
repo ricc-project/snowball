@@ -20,9 +20,6 @@ services:
   
   snowball:
     image: django
-    hostname: snowball
-    networks:
-      - napoleon_ricc-network
     build:
       context: .
       dockerfile: ./docker/Dockerfile
@@ -36,7 +33,3 @@ services:
 
 volumes:
   rabbit_data:
-
-networks:
-  napoleon_ricc-network:
-    external: true
