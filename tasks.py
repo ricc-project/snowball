@@ -27,7 +27,7 @@ def run(ctx):
     Run development server.
     """
     env = {}
-    manage(ctx, 'runserver 0.0.0.0:80', env)
+    manage(ctx, 'runserver 0.0.0.0:8000', env)
 
 
 @task
