@@ -23,7 +23,7 @@ def send_data(node, node_data):
 
 
 def request_data_api(end_point, data={}):
-    post_url = "http://napoleon.lappis.rocks/" + end_point
+    post_url = "http://10.0.0.145/" + end_point
 
     headers = {"content-type": "application/json"}
     data = json.dumps(data)
