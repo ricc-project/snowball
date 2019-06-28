@@ -3,10 +3,11 @@ from rest_framework import status
 from boogie.router import Router
 from django.db import models
 from django.http import HttpResponse
+from web_socket.actuator import switch
 from django.shortcuts import get_object_or_404
 from .models import User, Station, Central, Actuator, UnlockedCentral
 from .manager import verify_password
-from .data_api import create_user_on_data_api, send_data
+from .data_api import *
 import json
 
 urlpatterns = Router()
@@ -150,12 +151,31 @@ def receive_data(request):
     if user and central and node:
         data = json.loads(request.body)
         if 'data' in data.keys():
-            send_data(node, data['data'])
+            send_data(node, data['data'], data['timestamp'])
             return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
 
         return HttpResponse("Insuficient information", status=status.HTTP_401_UNAUTHORIZED)
     else:
         return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+
+@urlpatterns.route("central/last_datas/")
+def last_data(request):
+    user = verify_auth(request)
+    central = get_central(request)
+
+    if user and central:
+        for station in Station.objects.filter(central=central):
+            get_data(station)
+        return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+    else:
+        return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+
+@urlpatterns.route("actuator/switch/")
+def switch_actuator(request):
+    user = verify_auth(request)
+    central = get_central(request)
+    if user and central:
+        switch(central.mac_address)
 
 
 def verify_auth(request):

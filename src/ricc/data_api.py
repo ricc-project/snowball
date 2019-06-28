@@ -8,18 +8,30 @@ def create_user_on_data_api(username, password):
     }
     result = request_data_api('signup/', data)
     result = json.loads(result)
-
+    print(result)
     return result['authentication_token']
 
 
-def send_data(node, node_data):
+def send_data(node, node_data, timestamp):
     data = {
         "auth_token": node.data_token,
-        "data": node_data
+        "data": node_data,
+        "timestamp": timestamp
     }
     result = request_data_api('send-data/', data)
 
     print(result)
+
+
+def get_data(node):
+    data = {
+        "auth_token": node.data_token,
+        "central": node.central.mac_address,
+        "name": node.name
+    }
+    result = request_data_api('get_last/', data)
+    print(result)
+    return result
 
 
 def request_data_api(end_point, data={}):
