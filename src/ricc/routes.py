@@ -143,6 +143,7 @@ def create_actuator(request):
     else:
         return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
 
+
 @urlpatterns.route("send_data/")
 def receive_data(request):
     user = verify_auth(request)
@@ -162,7 +163,6 @@ def receive_data(request):
 def last_data(request):
     user = verify_auth(request)
     central = get_central(request)
-
     if user and central:
         all_data = {}
         for station in Station.objects.filter(central=central):
@@ -171,6 +171,23 @@ def last_data(request):
         return HttpResponse(str(json.dumps(all_data)), status=status.HTTP_201_CREATED)
     else:
         return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+
+@urlpatterns.route("central/stations_count/")
+def stations_count(request):
+    user = verify_auth(request)
+    central = get_central(request)
+    if user and central:
+        return HttpResponse(format_for_hugo(central.station_count()), status=status.HTTP_201_CREATED)
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+
+@urlpatterns.route("central/actuators_count/")
+def actuators_count(request):
+    user = verify_auth(request)
+    central = get_central(request)
+    if user and central:
+        return HttpResponse(format_for_hugo(central.actuator_count()), status=status.HTTP_201_CREATED)
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+
 
 @urlpatterns.route("node_status/")
 def switch_node(request):

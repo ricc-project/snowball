@@ -18,6 +18,12 @@ class Central(models.Model):
     automatic_irrigation = models.BooleanField('Automatic Irrigation Status')
     objects = CentralManager()
 
+    def station_count(self):
+        return Station.objects.filter(central=self).count()
+
+    def actuator_count(self):
+        return Actuator.objects.filter(central=self).count()
+
 @rest_api()
 class UnlockedCentral(models.Model):
     mac_address = models.CharField(max_length=64, unique=True)
