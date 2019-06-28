@@ -52,7 +52,7 @@ def login(request):
             try:
                 user = User.objects.get(username=username)
             except:
-                response = response = {"message": "Invalid login information."}
+                response = {"message": "Invalid login information."}
 
             if(verify_password(user, password)):
                 response = {"authentication_token": user.auth_token}
@@ -76,13 +76,13 @@ def create_central(request):
         if(unlockedCentrals):
             model = Central.objects.create_central(user, mac_address)
             if(model):
-                return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+                return HttpResponse(format_for_hugo("Beautiful"), status=status.HTTP_201_CREATED)
             else:
-                return HttpResponse("Mac already used.", status=status.HTTP_401_UNAUTHORIZED)
+                return HttpResponse(format_for_hugo("Mac already used."), status=status.HTTP_401_UNAUTHORIZED)
         else:
-            return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+            return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
     else:
-        return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+        return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
 @urlpatterns.route("call/")
 def socket_call(request):
@@ -164,11 +164,35 @@ def last_data(request):
     central = get_central(request)
 
     if user and central:
+        all_data = {}
         for station in Station.objects.filter(central=central):
-            get_data(station)
-        return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+            station_data = get_data(station)
+            all_data[station.name] = station_data
+        return HttpResponse(str(json.dumps(all_data)), status=status.HTTP_201_CREATED)
     else:
-        return HttpResponse("Unauthorized.", status=status.HTTP_401_UNAUTHORIZED)
+        return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+
+@urlpatterns.route("node_status/")
+def switch_node(request):
+    user = verify_auth(request)
+    central = get_central(request)
+    node = get_node(request)
+    if user and central and node:
+        node.switch()
+        node.save()
+        return HttpResponse('{"status":"'+str(node.status)+'"}', status=status.HTTP_200_OK)
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+        
+
+@urlpatterns.route("node/status/")
+def status_node(request):
+    user = verify_auth(request)
+    central = get_central(request)
+    node = get_node(request)
+    if user and central and node:
+        return HttpResponse('{"status":"'+str(node.status)+'"}', status=status.HTTP_200_OK)
+
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
 @urlpatterns.route("actuator/switch/")
 def switch_actuator(request):
@@ -176,6 +200,10 @@ def switch_actuator(request):
     central = get_central(request)
     if user and central:
         switch(central.mac_address)
+        return HttpResponse(format_for_hugo("Beautiful"), status=status.HTTP_200_OK)
+
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+
 
 
 def verify_auth(request):
@@ -216,3 +244,9 @@ def get_node(request):
         return None
     else:
         return None
+
+
+def format_for_hugo(str):
+    response = {"message": str}
+    response = json.dumps(response)
+    return response

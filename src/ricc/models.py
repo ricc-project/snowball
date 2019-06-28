@@ -29,10 +29,13 @@ class Node(models.Model):
     central = models.ForeignKey(Central, related_name='%(class)s', on_delete=models.CASCADE)
     name = models.CharField(max_length=64, unique=True)
     data_token = models.CharField(max_length=64)
+    status = models.BooleanField('Network Status', default=True)
+    
+    def switch(self):
+        self.status = not self.status
 
 @rest_api(exclude=['data_token'])
 class Actuator(Node):
-    status = models.BooleanField('Actuator Status')
     objects = ActuatorManager()
 
 @rest_api(exclude=['data_token'])
