@@ -267,3 +267,36 @@ def format_for_hugo(str):
     response = {"message": str}
     response = json.dumps(response)
     return response
+
+
+
+# New URLS
+
+@urlpatterns.route("centrals/")
+def centrals_by_owner(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            user = verify_auth(request)
+            user_centrals = Central.objects.filter(owner=user)
+            response_centrals = []
+
+            for central in user_centrals:
+                response_centrals.append(
+                    {
+                        "mac_address": central.mac_address,
+                        "automatic_irrigation": central.automatic_irrigation,
+                        "amount_stations": central.station_count(),
+                        "amount_actuators": central.actuator_count()
+                    }
+                )
+            rstatus = status.HTTP_200_OK            
+            response = {"centrals": response_centrals}
+        except:
+            response = {"centrals": []}
+    else:
+        response = {"centrals": "No GET function around here"}
+
+    response = json.dumps(response)
+    return HttpResponse(response, status=rstatus)
