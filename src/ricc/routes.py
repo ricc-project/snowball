@@ -300,3 +300,67 @@ def centrals_by_owner(request):
 
     response = json.dumps(response)
     return HttpResponse(response, status=rstatus)
+
+
+@urlpatterns.route("stations/")
+def stations_by_owner(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            user = verify_auth(request)
+            user_centrals = Central.objects.filter(owner=user)
+            response_stations = []
+
+            for central in user_centrals:
+                user_stations = Station.objects.filter(central=central)  
+                for station in user_stations:
+                    response_stations.append(
+                        {
+                            "related_central": station.central.mac_address,
+                            "name": station.name,
+                            "status": station.status,
+                        }
+                    )
+            rstatus = status.HTTP_200_OK            
+            response = {"stations": response_stations}
+
+        except:
+            response = {"stations": []}
+    else:
+        response = {"stations": "No GET function around here"}
+    
+    response = json.dumps(response)
+    return HttpResponse(response, status=rstatus)
+
+
+@urlpatterns.route("actuators/")
+def actuators_by_owner(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            user = verify_auth(request)
+            user_centrals = Central.objects.filter(owner=user)
+            response_actuators = []
+
+            for central in user_centrals:
+                user_actuators = Actuator.objects.filter(central=central)  
+                for actuator in user_actuators:
+                    response_actuators.append(
+                        {
+                            "related_central": actuator.central.mac_address,
+                            "name": actuator.name,
+                            "status": actuator.status,
+                        }
+                    )
+            rstatus = status.HTTP_200_OK            
+            response = {"actuators": response_actuators}
+
+        except:
+            response = {"actuators": []}
+    else:
+        response = {"actuators": "No GET function around here"}
+    
+    response = json.dumps(response)
+    return HttpResponse(response, status=rstatus)
