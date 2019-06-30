@@ -164,11 +164,21 @@ def last_data(request):
     user = verify_auth(request)
     central = get_central(request)
     if user and central:
-        all_data = {}
+        all_data = []
         for station in Station.objects.filter(central=central):
-            station_data = get_data(station)
-            all_data[station.name] = station_data
-        return HttpResponse(str(json.dumps(all_data)), status=status.HTTP_201_CREATED)
+            s_data = get_data(station)
+
+            data = {
+                "station" : {
+                    "name" : station.name,
+                },
+                "data" : s_data
+            }
+
+            all_data.append(data)
+            # print("all", all_data)
+
+        return HttpResponse(json.dumps(all_data), status=status.HTTP_201_CREATED)
     else:
         return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
