@@ -182,6 +182,33 @@ def last_data(request):
     else:
         return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
+
+@urlpatterns.route("actuator/last_datas/")
+def actuator_last_data(request):
+    user = verify_auth(request)
+    central = get_central(request)
+    if user and central:
+        all_data = []
+        for actuator in Actuator.objects.filter(central=central):
+            print(actuator)
+            a_data = get_last_activated_switch(actuator)
+
+            data = {
+                "actuator" : {
+                    "name" : actuator.name,
+                },
+                "data" : a_data
+            }
+
+            all_data.append(data)
+            # print("all", all_data)
+
+        return HttpResponse(json.dumps(all_data), status=status.HTTP_201_CREATED)
+    else:
+        return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+
+
+
 @urlpatterns.route("central/stations_count/")
 def stations_count(request):
     user = verify_auth(request)
