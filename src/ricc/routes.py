@@ -401,3 +401,56 @@ def actuators_by_owner(request):
     
     response = json.dumps(response)
     return HttpResponse(response, status=rstatus)
+
+
+@urlpatterns.route("user/")
+def get_user(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            user = verify_auth(request)
+            user_centrals = Central.objects.filter(owner=user)
+            user_centrals = user_centrals.first()
+
+            data = {
+                "username" : user.username,
+                "name" : user.name,
+                "ricc_code" : user_centrals.mac_address
+            }
+
+            rstatus = status.HTTP_200_OK            
+            response = {"user": data}
+
+        except:
+            response = {"user": []}
+    else:
+        response = {"user": "No GET function around here"}
+
+    response = json.dumps(response)
+    return HttpResponse(response, status=rstatus)
+
+
+@urlpatterns.route("edit_user/")
+def edit_user(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            user = verify_auth(request)
+            data = json.loads(request.body)
+
+            user.name = data['name']
+            user.username = data['username']
+            user.save()
+
+            rstatus = status.HTTP_200_OK
+            response = {"user": "Updated"}
+
+        except:
+            response = {"user": ""}
+    else:
+        response = {"user": "No GET function around here"}
+
+    response = json.dumps(response)
+    return HttpResponse(response, status=rstatus)

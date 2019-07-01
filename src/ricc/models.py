@@ -5,6 +5,7 @@ from boogie.rest import rest_api
 @rest_api(exclude=['hash','auth_token'])
 class User(models.Model):
     username = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50, blank=True, default="")
     hash = models.CharField(max_length=128)
     auth_token = models.CharField(max_length=64)
     objects = UserManager()
