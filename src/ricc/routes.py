@@ -509,9 +509,9 @@ def save_card(request):
             user_cards_amount_a = UserCard.objects.count()
 
             if(user_cards_amount_a > user_cards_amount_p):
-                return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+                return HttpResponse(json.dumps({"status": "beautiful"}), status=status.HTTP_201_CREATED)
             else:
-                return HttpResponse("Got trouble.", status=status.HTTP_401_UNAUTHORIZED)
+                return HttpResponse(json.dumps({"status": "Got trouble"}), status=status.HTTP_401_UNAUTHORIZED)
         except:
             response = {"value": None}
     else:
