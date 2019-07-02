@@ -312,10 +312,12 @@ def get_node(request):
         data = json.loads(request.body)
         if 'name' in data.keys():
             actuator = Actuator.objects.filter(name=data['name'])
+            print(actuator)
             if actuator:
                 return actuator.first()
             else:
                 station = Station.objects.filter(name=data['name'])
+                print(station)
                 if station:
                     return station.first()
         return None
