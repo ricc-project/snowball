@@ -46,7 +46,7 @@ def get_last_activated_switch(node):
     return result
 
 def request_data_api(end_point, data={}):
-    post_url = "http://localhost:8001/" + end_point
+    post_url = "http://10.0.0.145/" + end_point
 
     headers = {"content-type": "application/json"}
     data = json.dumps(data)
