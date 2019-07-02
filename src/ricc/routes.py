@@ -208,6 +208,14 @@ def actuator_last_data(request):
         return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
 
+@urlpatterns.route("irrigation/")
+def get_irrigation(request):
+    user = verify_auth(request)
+    central = get_central(request)
+    if user and central:
+        return HttpResponse('{"auto_irrigation":"'+str(central.automatic_irrigation)+'"}', status=status.HTTP_201_CREATED)
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+
 
 @urlpatterns.route("central/stations_count/")
 def stations_count(request):
@@ -258,7 +266,16 @@ def switch_actuator(request):
 
     return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
+@urlpatterns.route("central/switch/")
+def switch_central(request):
+    user = verify_auth(request)
+    central = get_central(request)
+    if user and central:
+        central.automatic_irrigation = not central.automatic_irrigation
+        central.save()
+        return HttpResponse(format_for_hugo("Beautiful"), status=status.HTTP_200_OK)
 
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
 def verify_auth(request):
     if(request.method == "POST"):
