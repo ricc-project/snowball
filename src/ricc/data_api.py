@@ -9,8 +9,10 @@ def create_user_on_data_api(username, password):
     result = request_data_api('signup/', data)
     result = json.loads(result)
     print(result)
-    return result['authentication_token']
-
+    try:
+        return result['authentication_token']
+    except:
+        return None
 
 def send_data(node, node_data, timestamp):
     data = {
