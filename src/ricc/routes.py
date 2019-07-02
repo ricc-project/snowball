@@ -156,6 +156,7 @@ def receive_data(request):
     node = get_node(request)
     if user and central and node:
         data = json.loads(request.body)
+        print(data)
         if 'data' in data.keys():
             send_data(node, data['data'], data['timestamp'])
             return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
