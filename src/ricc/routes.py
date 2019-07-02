@@ -105,6 +105,7 @@ def sign_central(request):
     # user = verify_auth(request)
     # if(user):
     mac_address = json.loads(request.body)['mac_address']
+    print("request_data: "+str(json.loads(request.body))+"\n")
     model = UnlockedCentral.objects.create_central(mac_address)
     if(model):
         return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
@@ -114,6 +115,7 @@ def sign_central(request):
 
 @urlpatterns.route("create_station/")
 def create_station(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     if(user):
         name = json.loads(request.body)['name']
@@ -132,6 +134,7 @@ def create_station(request):
 
 @urlpatterns.route("create_actuator/")
 def create_actuator(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     if(user):
         name = json.loads(request.body)['name']
@@ -151,6 +154,7 @@ def create_actuator(request):
 
 @urlpatterns.route("send_data/")
 def receive_data(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     node = get_node(request)
@@ -167,6 +171,7 @@ def receive_data(request):
 
 @urlpatterns.route("central/last_datas/")
 def last_data(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     if user and central:
@@ -191,6 +196,7 @@ def last_data(request):
 
 @urlpatterns.route("actuator/last_datas/")
 def actuator_last_data(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     if user and central:
@@ -216,6 +222,7 @@ def actuator_last_data(request):
 
 @urlpatterns.route("irrigation/")
 def get_irrigation(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     if user and central:
@@ -225,6 +232,7 @@ def get_irrigation(request):
 
 @urlpatterns.route("central/stations_count/")
 def stations_count(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     if user and central:
@@ -233,6 +241,7 @@ def stations_count(request):
 
 @urlpatterns.route("central/actuators_count/")
 def actuators_count(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     if user and central:
@@ -242,6 +251,7 @@ def actuators_count(request):
 
 @urlpatterns.route("node_status/")
 def switch_node(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     node = get_node(request)
@@ -254,6 +264,7 @@ def switch_node(request):
 
 @urlpatterns.route("node/status/")
 def status_node(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     node = get_node(request)
@@ -264,6 +275,7 @@ def status_node(request):
 
 @urlpatterns.route("actuator/switch/")
 def switch_actuator(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     if user and central:
@@ -274,6 +286,7 @@ def switch_actuator(request):
 
 @urlpatterns.route("central/switch/")
 def switch_central(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     if user and central:
@@ -336,6 +349,7 @@ def format_for_hugo(str):
 
 @urlpatterns.route("centrals/")
 def centrals_by_owner(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     rstatus = status.HTTP_403_FORBIDDEN
 
     if(request.method == "POST"):
@@ -366,6 +380,8 @@ def centrals_by_owner(request):
 
 @urlpatterns.route("stations/")
 def stations_by_owner(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
+
     rstatus = status.HTTP_403_FORBIDDEN
 
     if(request.method == "POST"):
@@ -398,6 +414,8 @@ def stations_by_owner(request):
 
 @urlpatterns.route("actuators/")
 def actuators_by_owner(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
+
     rstatus = status.HTTP_403_FORBIDDEN
 
     if(request.method == "POST"):
@@ -430,6 +448,7 @@ def actuators_by_owner(request):
 
 @urlpatterns.route("user/")
 def get_user(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     rstatus = status.HTTP_403_FORBIDDEN
 
     if(request.method == "POST"):
@@ -458,6 +477,7 @@ def get_user(request):
 
 @urlpatterns.route("edit_user/")
 def edit_user(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
     rstatus = status.HTTP_403_FORBIDDEN
 
     if(request.method == "POST"):
