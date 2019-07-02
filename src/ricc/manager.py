@@ -104,3 +104,20 @@ def verify_password(user=None, provided_password=None):
                                   100000)
     pwdhash = binascii.hexlify(pwdhash).decode('ascii')
     return pwdhash == stored_password
+
+
+class UserCardManager(models.Manager):
+    def _create_user_card(self, user, central, station, card_type):
+
+        user_card = self.model(self, user, central, station, card_type)
+        try:
+            user_card.save(using=self._db)
+        except Exception as e:
+            raise(e)
+            return None
+
+
+        return user_card
+
+    def create_user_card(self, user, central, station, card_type):
+        return self._create_user_card(user, central, station, card_type)

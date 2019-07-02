@@ -5,7 +5,7 @@ from django.db import models
 from django.http import HttpResponse
 from web_socket.actuator import switch
 from django.shortcuts import get_object_or_404
-from .models import User, Station, Central, Actuator, UnlockedCentral
+from .models import User, Station, Central, Actuator, UnlockedCentral, UserCard
 from .manager import verify_password
 from .data_api import *
 import json
@@ -454,3 +454,93 @@ def edit_user(request):
 
     response = json.dumps(response)
     return HttpResponse(response, status=rstatus)
+
+
+@urlpatterns.route("measure/last/")
+def last_data(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            data = json.loads(request.body)
+
+            user = verify_auth(request)
+            central = get_central(request)
+            r_station = data['station']
+            filters = data['filters']
+
+            if user and central and r_station and filters:
+                station = Station.objects.filter(central=central, name=r_station)
+                result_data = get_data(station[0])
+
+                category = filters['category']
+                measure = filters['measure']
+
+                response = {"value": result_data[category][0][measure]}
+
+                return HttpResponse(json.dumps(response), status=status.HTTP_201_CREATED)
+
+        except:
+            response = {"value": None}
+    else:
+        response = {"value": "No GET function around here"}
+    
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+
+
+@urlpatterns.route("card/save/")
+def save_card(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            data = json.loads(request.body)
+
+            user = verify_auth(request)
+            central = get_central(request)
+            r_station = data['station']
+            card_type = data['card_type']
+
+            user_cards_amount_p = UserCard.objects.count()
+
+            user_card = UserCard(owner=user, central=central.mac_address, station=r_station, card_type=card_type)
+            user_card.save()
+
+            user_cards_amount_a = UserCard.objects.count()
+
+            if(user_cards_amount_a > user_cards_amount_p):
+                return HttpResponse("beautiful", status=status.HTTP_201_CREATED)
+            else:
+                return HttpResponse("Got trouble.", status=status.HTTP_401_UNAUTHORIZED)
+        except:
+            response = {"value": None}
+    else:
+        response = {"value": "No GET function around here"}
+
+
+@urlpatterns.route("card/get/")
+def get_card(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            response = []
+
+            user = verify_auth(request)
+
+            print("here", user)
+            cards = UserCard.objects.filter(owner=user)
+            print("cards", cards)
+            
+            for card in cards:
+                response.append({
+                    "central" : card.central,
+                    "station" : card.station,
+                    "card_type" : card.card_type
+                })
+
+            return HttpResponse(json.dumps({"cards": response}), status=status.HTTP_201_CREATED)
+        except:
+            response = {"value": None}
+    else:
+        return HttpResponse("Got trouble.", status=status.HTTP_401_UNAUTHORIZED)

@@ -1,5 +1,5 @@
 from django.db import models
-from .manager import UserManager, CentralManager, ActuatorManager, StationManager, UnlockedCentralManager
+from .manager import UserManager, CentralManager, ActuatorManager, StationManager, UnlockedCentralManager, UserCardManager
 from boogie.rest import rest_api
 
 @rest_api(exclude=['hash','auth_token'])
@@ -49,3 +49,10 @@ class Actuator(Node):
 class Station(Node):
     objects = StationManager()
     sensors = ['soil','wind','air','solar','rain']
+
+@rest_api()
+class UserCard(models.Model):
+    owner = models.ForeignKey(User, related_name="owner", on_delete=models.CASCADE)
+    central = models.CharField(max_length=128)
+    station = models.CharField(max_length=128)
+    card_type = models.CharField(max_length=30)
