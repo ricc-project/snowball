@@ -17,21 +17,26 @@ def signup(request):
     rstatus = status.HTTP_403_FORBIDDEN
     if(request.method == "POST"):
         data = json.loads(request.body)
-        if data.keys() >= {"username", "password"}:
+        if data.keys() >= {"username", "password", "mac_address"}:
             username = data['username']
             password = data['password']
-            user = User.objects.create_user(username, password)
-            if(user):
-                response = {"authentication_token": user.auth_token}
-                response = json.dumps(response)
-                response = json.loads(response)
+            mac_address = json.loads(request.body)['mac_address']
+            unlockedCentrals = UnlockedCentral.objects.filter(mac_address=mac_address)
+            if(unlockedCentrals):
+                user = User.objects.create_user(username, password)
+                if(user):
+                    model = Central.objects.create_central(user, mac_address)
+                    print("MEU PIRU")
+                    response = {"authentication_token": user.auth_token}
+                    response = json.dumps(response)
+                    response = json.loads(response)
 
-                rstatus = status.HTTP_201_CREATED
-            else:
-                response = {"message": "username already taken"}
+                    rstatus = status.HTTP_201_CREATED
+                else:
+                    response = {"message": "username already taken"}
         else:
             response = {
-                "message": "You need to send password and username."}
+                "message": "You need to send password and username and a mac_address."}
     else:
         response = {"message": "Can't signup with GET method."}
 

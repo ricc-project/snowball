@@ -16,7 +16,7 @@ class User(models.Model):
 class Central(models.Model):
     owner = models.ForeignKey(User, related_name="centrals", on_delete=models.CASCADE)
     mac_address = models.CharField(max_length=64, unique=True)
-    automatic_irrigation = models.BooleanField('Automatic Irrigation Status')
+    automatic_irrigation = models.BooleanField('Automatic Irrigation Status', default=False)
     objects = CentralManager()
 
     def station_count(self):
