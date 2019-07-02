@@ -500,6 +500,21 @@ def last_data(request):
 
                 response = {"value": result_data[category][0][measure]}
 
+                if measure == 'speed':
+                    response = {"value": {
+                                        "speed" : result_data[category][0]['speed'],
+                                        "direction" : result_data[category][0]['direction']
+                                        }
+                    }
+
+                elif measure == 'moisture1':
+                    response = {"value": {
+                                        "moisture1" : result_data[category][0]['moisture1'],
+                                        "moisture2" : result_data[category][0]['moisture2'],
+                                        "moisture3" : result_data[category][0]['moisture3']
+                                        }
+                    }                    
+
                 return HttpResponse(json.dumps(response), status=status.HTTP_201_CREATED)
 
         except:
