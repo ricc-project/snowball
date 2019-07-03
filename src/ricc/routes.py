@@ -547,6 +547,33 @@ def last_data(request):
     
     return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
+@urlpatterns.route("measure/period/")
+def period_data(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            data = json.loads(request.body)
+
+            user = verify_auth(request)
+            central = get_central(request)
+            filters = data['filters']
+
+            print(filters)
+
+            if user and central and filters:
+                stations = Station.objects.filter(central=central)
+                result_data = get_period_data(stations, filters)
+
+                response = {"measures": result_data}
+                return HttpResponse(json.dumps(response), status=status.HTTP_201_CREATED)
+
+        except:
+            response = {"value": None}
+    else:
+        response = {"value": "No GET function around here"}
+    
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
 @urlpatterns.route("card/save/")
 def save_card(request):

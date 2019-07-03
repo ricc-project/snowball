@@ -36,6 +36,30 @@ def get_data(node):
     
     return result
 
+def get_period_data(nodes, filters):
+    results = []
+
+    print("FILTERS", filters)
+
+    for node in nodes:
+        args = {
+            "auth_token": node.data_token,
+            "central": node.central.mac_address,
+            "filters" : filters
+        }
+         
+        data = request_data_api('get_period_data/', args)
+        
+        result = {
+            "station" : node.name,
+            "data" : json.loads(data)
+        }
+
+        results.append(result)
+
+    return results
+
+
 def get_last_activated_switch(node):
     data = {
         "auth_token": node.data_token,
@@ -53,7 +77,7 @@ def request_data_api(end_point, data={}):
     headers = {"content-type": "application/json"}
     data = json.dumps(data)
 
-    print(data)
+    print("DATA", data)
 
     r = requests.post(post_url, data=data, headers=headers)
 
