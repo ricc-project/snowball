@@ -604,6 +604,33 @@ def save_card(request):
     else:
         response = {"value": "No GET function around here"}
 
+@urlpatterns.route("card2/save/")
+def save_card_t(request):
+    rstatus = status.HTTP_403_FORBIDDEN
+
+    if(request.method == "POST"):
+        try:
+            data = json.loads(request.body)
+
+            user = verify_auth(request)
+            central = get_central(request)
+            card_type = data['card_type']
+
+            user_cards_amount_p = UserCard.objects.count()
+
+            user_card = UserCard(owner=user, central=central.mac_address, card_type=card_type)
+            user_card.save()
+
+            user_cards_amount_a = UserCard.objects.count()
+
+            if(user_cards_amount_a > user_cards_amount_p):
+                return HttpResponse(json.dumps({"status": "beautiful"}), status=status.HTTP_201_CREATED)
+            else:
+                return HttpResponse(json.dumps({"status": "Got trouble"}), status=status.HTTP_401_UNAUTHORIZED)
+        except:
+            response = {"value": None}
+    else:
+        response = {"value": "No GET function around here"}
 
 @urlpatterns.route("card/get/")
 def get_card(request):
