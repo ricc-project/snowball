@@ -569,15 +569,13 @@ def period_data(request):
 
             user = verify_auth(request)
             central = get_central(request)
+            
             filters = data['filters']
-
-            print(filters)
 
             if user and central and filters:
                 stations = Station.objects.filter(central=central)
-                result_data = get_period_data(stations, filters)
-
-                response = {"measures": result_data}
+                response = get_period_data(stations, filters)
+                
                 return HttpResponse(json.dumps(response), status=status.HTTP_201_CREATED)
 
         except:

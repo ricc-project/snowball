@@ -39,8 +39,6 @@ def get_data(node):
 def get_period_data(nodes, filters):
     results = []
 
-    print("FILTERS", filters)
-
     for node in nodes:
         args = {
             "auth_token": node.data_token,
@@ -49,12 +47,19 @@ def get_period_data(nodes, filters):
         }
          
         data = request_data_api('get_period_data/', args)
-        
+
+
+        data = json.loads(data)
+        print("DATAAA", data['data'])
         result = {
-            "station" : node.name,
-            "data" : json.loads(data)
+            "dataset" : {
+                "data": data['data'],
+                "label": node.name
+            },
+            "labels": data['labels']
         }
 
+        print("RESULT", data)
         results.append(result)
 
     return results
