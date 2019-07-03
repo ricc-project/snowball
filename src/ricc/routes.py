@@ -249,18 +249,30 @@ def actuators_count(request):
     return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
 
 
-@urlpatterns.route("node_status/")
-def switch_node(request):
+@urlpatterns.route("node_status/on/")
+def turnon_node(request):
     print("request_data: "+str(json.loads(request.body))+"\n")
     user = verify_auth(request)
     central = get_central(request)
     node = get_node(request)
     if user and central and node:
-        node.switch()
+        node.status = True
         node.save()
         return HttpResponse('{"status":"'+str(node.status)+'"}', status=status.HTTP_200_OK)
     return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
         
+@urlpatterns.route("node_status/off/")
+def turnoff_node(request):
+    print("request_data: "+str(json.loads(request.body))+"\n")
+    user = verify_auth(request)
+    central = get_central(request)
+    node = get_node(request)
+    if user and central and node:
+        node.status = False
+        node.save()
+        return HttpResponse('{"status":"'+str(node.status)+'"}', status=status.HTTP_200_OK)
+    return HttpResponse(format_for_hugo("Unauthorized."), status=status.HTTP_401_UNAUTHORIZED)
+
 
 @urlpatterns.route("node/status/")
 def status_node(request):
